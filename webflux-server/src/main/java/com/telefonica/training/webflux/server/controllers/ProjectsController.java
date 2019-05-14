@@ -57,7 +57,8 @@ public class ProjectsController {
 	}
 
 	@PutMapping("/{projectId}")
-	public Mono<Project> updateProject(@RequestBody Project project) {
+	public Mono<Project> updateProject(@PathVariable long projectId, @RequestBody Project project) {
+		project.setId(projectId);
 		return projectsService.updateProject(project);
 	}
 
