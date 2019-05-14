@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import com.telefonica.training.webflux.server.domain.Project;
 
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Repository
@@ -25,6 +26,10 @@ public class ProjectsRepository {
 	public Mono<Project> save(Project project) {
 		projects.put(project.getId(), project);
 		return Mono.just(project);
+	}
+
+	public Flux<Project> findAll() {
+		return Flux.fromIterable(projects.values());
 	}
 
 	public Mono<Project> findById(long projectId) {
