@@ -7,6 +7,7 @@ package com.telefonica.training.webflux.server.services;
 import org.springframework.stereotype.Service;
 
 import com.telefonica.training.webflux.server.domain.Project;
+import com.telefonica.training.webflux.server.exceptions.NotFoundException;
 import com.telefonica.training.webflux.server.repositories.ProjectsRepository;
 
 import reactor.core.publisher.Flux;
@@ -32,11 +33,13 @@ public class ProjectsService {
 	}
 
 	public Mono<Project> getProject(long projectId) {
-		return projectsRepository.findById(projectId);
+		return projectsRepository.findById(projectId)
+				.switchIfEmpty(Mono.error(new NotFoundException()));
 	}
 
 	public Mono<Project> updateProject(Project project) {
-		return projectsRepository.save(project);
+		return getProject(project.getId())
+				.flatMap(oldProject -> projectsRepository.save(project));
 	}
 
 	public Mono<Void> deleteProject(long projectId) {
