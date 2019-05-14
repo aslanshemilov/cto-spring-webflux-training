@@ -31,7 +31,8 @@ public class ExerciseTransformingReactiveFlux1
     {
     	Flux<String> fruits = getFluxSample1();
     	
-    	{fluxToCreate}.log().doOnTerminate(() -> {
+    	fruits.flatMap(fruit -> getMonoSample3(fruit).map(veggie -> "I like " + fruit + " with " + veggie))
+    	.log().doOnTerminate(() -> {
     		//System.exit(0);
     	}).subscribe(System.out::println);
     	

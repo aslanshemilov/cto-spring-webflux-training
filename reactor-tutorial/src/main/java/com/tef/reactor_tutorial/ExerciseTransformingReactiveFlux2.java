@@ -22,9 +22,21 @@ public class ExerciseTransformingReactiveFlux2
     	Mono<String> user = getFluxSample2();
     	Flux<String> fruits = getFluxSample1();
     	
-    	{monoToCreate}.log().doOnTerminate(() -> {
+    	
+    	user.flatMap(userStr -> fruits.collectList().map(fruitsArray -> userStr + " hates " + String.join(", ", fruitsArray)))
+    	.log().doOnTerminate(() -> {
     		//System.exit(0);
     	}).subscribe(System.out::println);
+    	
+    	
+//    	fruits.reduce("", (fruit1, fruit2) -> {
+//    		if (fruit1.equals("")) {
+//    			return fruit2;
+//    		}
+//    		return fruit1 + ", " + fruit2;
+//    	}).flatMap(fruitsStr-> user.map(userStr -> userStr + " hates " + fruitsStr)).log().doOnTerminate(() -> {
+//    		//System.exit(0);
+//    	}).subscribe(System.out::println);
     	
     	long start = System.currentTimeMillis();
     	Thread.sleep(3000);

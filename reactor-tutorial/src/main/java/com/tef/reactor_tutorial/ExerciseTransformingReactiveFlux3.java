@@ -28,9 +28,14 @@ public class ExerciseTransformingReactiveFlux3
     	Flux<String> users = getFluxSample1();
     	Flux<String> veggies = getFluxSample2();
     	
-    	{fluxToCreate}.log().doOnTerminate(() -> {
+
+    	users.flatMap(userStr -> veggies.map(veggie -> userStr + " hates " + veggie)).log().doOnTerminate(() -> {
     		//System.exit(0);
     	}).subscribe(System.out::println);
+    	
+//    	veggies.flatMap(veggie -> users.map(userStr -> userStr + " hates " + veggie)).log().doOnTerminate(() -> {
+//    		//System.exit(0);
+//    	}).subscribe(System.out::println);
     	
     	
     	long start = System.currentTimeMillis();
