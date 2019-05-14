@@ -1,0 +1,151 @@
+openapi: 3.0.1
+info:
+  title: Spring WebFlux training
+  description: Spring WebFlux training
+  version: '1.0'
+servers:
+  - url: 'http://localhost:8080/api'
+    description: Local server
+paths:
+  /projects:
+    post:
+      summary: Create a project
+      description: Create a project
+      operationId: createProject
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/projectInfo'
+      responses:
+        '201':
+          description: Successful response
+          headers:
+            Location:
+              $ref: '#/components/headers/location'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/project'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+    get:
+      summary: Find projects
+      description: Find projects
+      operationId: findProjects
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/project'
+  /projects/{projectId}:
+    parameters:
+      - $ref: '#/components/parameters/projectId'
+    get:
+      summary: Get project
+      description: Get project by projectId
+      operationId: getProject
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/project'
+        '404':
+          description: Not found
+    put:
+      summary: Update project
+      description: Update project by projectId
+      operationId: updateProject
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/project'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        '404':
+          description: Not found
+    delete:
+      summary: Remove project
+      description: Remove project by projectId
+      operationId: removeProject
+      responses:
+        '204':
+          description: Successful response
+        '404':
+          description: Not found
+
+components:
+  parameters:
+    projectId:
+      name: projectId
+      in: path
+      description: Project identifier
+      required: true
+      schema:
+        $ref: '#/components/schemas/projectId'
+  headers:
+    location:
+      description: Location header with the path to the new resource
+      schema:
+        type: string
+  schemas:
+    projectId:
+      title: Project identifier
+      type: integer
+    projectInfo:
+      title: Project information (without projectId)
+      type: object
+      required:
+       - name
+       - organization
+       - githubToken
+       - repositories
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+          minLength: 1
+        organization:
+          type: string
+          minLength: 1
+        githubToken:
+          type: string
+          minLength: 1
+        repositories:
+          type: array
+          items:
+            type: string
+            minLength: 1
+    project:
+      title: Project entity (id and information)
+      allOf:
+        - type: object
+          properties:
+            id:
+              $ref: '#/components/schemas/projectId'
+        - $ref: '#/components/schemas/projectInfo'
+    error:
+      title: Response error
+      type: object
+      properties:
+        error:
+          type: string
+        error_description:
+          type: string
