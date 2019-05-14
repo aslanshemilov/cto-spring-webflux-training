@@ -15,9 +15,19 @@ public class ExerciseControlFlowReactive1
     {
     	
     	getUser("Peter").switchIfEmpty(Mono.error(new Throwable("Resource not found"))).log()
+    	.doOnError(System.out::println)
     	.doOnTerminate(() -> {
     		System.out.println("Finish");
     	}).subscribe(System.out::println);
+    	
+    	
+//    	getUser("Peter").switchIfEmpty(
+//    			Mono.error(new Throwable("Resource not found"))
+//    	).log()
+//    	.doOnTerminate(() -> {
+//    		System.out.println("Finish");
+//    	
+//    	}).subscribe(System.out::println, System.out::println);
     	
     	
     	long start = System.currentTimeMillis();
