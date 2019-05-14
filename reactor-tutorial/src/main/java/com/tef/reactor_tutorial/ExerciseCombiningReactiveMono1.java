@@ -32,9 +32,22 @@ public class ExerciseCombiningReactiveMono1
 	
     public static void main( String[] args ) throws InterruptedException
     {
-    	{monoToCreate}.log().doOnTerminate(() -> {
-    		System.exit(0);
-    	}).subscribe(System.out::println);
+    	Mono.zip(getMonoSample1(),getMonoSample2()).log().doOnTerminate(() -> {
+			//System.exit(0);
+		}).subscribe(System.out::println);
+	
+//		getMonoSample1().zipWith(getMonoSample2()).log().doOnTerminate(() -> {
+//			//System.exit(0);
+//		}).subscribe(System.out::println);
+	
+	
+//		getMonoSample1().zipWhen((data1)-> getMonoSample2()).log().doOnTerminate(() -> {
+//			//System.exit(0);
+//		}).subscribe(System.out::println);
+	
+//		getMonoSample1().zipWhen((data1)-> getMonoSample3(data1)).log().doOnTerminate(() -> {
+//		//System.exit(0);
+//		}).subscribe(System.out::println);
 
     	
     	long start = System.currentTimeMillis();
