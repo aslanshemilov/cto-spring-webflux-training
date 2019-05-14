@@ -20,6 +20,12 @@ public class ProjectsService {
 		this.projectsRepository = projectsRepository;
 	}
 
+	public Mono<Project> createProject(Project project) {
+		return projectsRepository.next()
+				.map(projectId -> project.setId(projectId))
+				.flatMap(p -> projectsRepository.save(project));
+	}
+
 	public Mono<Project> getProject(long projectId) {
 		return projectsRepository.findById(projectId);
 	}

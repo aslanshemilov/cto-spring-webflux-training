@@ -19,8 +19,14 @@ public class ProjectsRepository {
 
 	private Map<Long, Project> projects;
 
+	private long sequence;
+
 	public ProjectsRepository() {
 		projects = new HashMap<>();
+	}
+
+	public Mono<Long> next() {
+		return Mono.just(++sequence);
 	}
 
 	public Mono<Project> save(Project project) {
