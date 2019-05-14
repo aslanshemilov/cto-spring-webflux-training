@@ -22,9 +22,9 @@ public class ProjectsRepository {
 		projects = new HashMap<>();
 	}
 
-	public Mono<Void> save(Project project) {
+	public Mono<Project> save(Project project) {
 		projects.put(project.getId(), project);
-		return Mono.empty();
+		return Mono.just(project);
 	}
 
 	public Mono<Project> findById(long projectId) {
