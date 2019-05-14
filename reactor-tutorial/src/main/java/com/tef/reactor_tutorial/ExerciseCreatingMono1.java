@@ -7,7 +7,7 @@ public class ExerciseCreatingMono1
 {
 	
 	public static Mono<String> getMonoSample1() {
-		return null;
+		return Mono.just("Apple");
 	}
 	
 	

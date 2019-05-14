@@ -10,20 +10,19 @@ import reactor.core.publisher.Mono;
 public class ExerciseCreatingMono2 
 {
 	
-	public static Mono getMonoSample1() {
+	public static Mono<List<String>> getMonoSample1() {
 		List<String> fruits = new ArrayList<>();
 		fruits.add("Apple");
 		fruits.add("Orange");
 		fruits.add("Grape");
 		fruits.add("Strawberry");
-		return null;
+		return Mono.just(fruits);
 	}
 	
 	
 	// Create a Mono from an Iterable and show the data in the stdout.
     public static void main( String[] args ) throws InterruptedException
-    {
-    	
+    {	
     	getMonoSample1().log().doOnTerminate(() -> {
     		//System.exit(0);
     	}).subscribe(System.out::println);
