@@ -66,6 +66,11 @@ paths:
       summary: Update project
       description: Update project by projectId
       operationId: updateProject
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/projectInfo'
       responses:
         '200':
           description: Successful response
