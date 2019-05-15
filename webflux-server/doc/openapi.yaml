@@ -95,6 +95,23 @@ paths:
           description: Successful response
         '404':
           description: Not found
+  /projects/{projectId}/repos/{repo}:
+    parameters:
+      - $ref: '#/components/parameters/projectId'
+      - $ref: '#/components/parameters/repo'
+    get:
+      summary: Get repository report
+      description: Get repository report by projectId and repository name
+      operationId: getRepoReport
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/repoReport'
+        '404':
+          description: Not found
 
 components:
   parameters:
@@ -105,6 +122,14 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/projectId'
+    repo:
+      name: repo
+      in: path
+      description: Repository name
+      required: true
+      schema:
+        type: string
+        minLength: 1
   headers:
     location:
       description: Location header with the path to the new resource
@@ -146,6 +171,14 @@ components:
             id:
               $ref: '#/components/schemas/projectId'
         - $ref: '#/components/schemas/projectInfo'
+    repoReport:
+      title: Repository report
+      type: object
+      required:
+       - languages
+      properties:
+        languages:
+          type: object
     error:
       title: Response error
       type: object
