@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.telefonica.training.webflux.server.domain.ServerError;
 import com.telefonica.training.webflux.server.exceptions.NotFoundException;
 
 @ControllerAdvice
@@ -22,9 +23,9 @@ public class ErrorControllerAdvice {
 	}
 
 	@ExceptionHandler(ResponseStatusException.class)
-	public ResponseEntity<?> handleResponseStatusException(ResponseStatusException e) {
+	public ResponseEntity<ServerError> handleResponseStatusException(ResponseStatusException e) {
 		return ResponseEntity.status(e.getStatus())
-				.build();
+				.body(new ServerError("spring-error", e.getReason()));
 	}
 
 }
