@@ -1,0 +1,40 @@
+KafkaApplication:
+  message:
+    length: 10
+  producer:
+    enabled: false
+    blockingTime: 10    
+  consumer:
+    enabled: true
+    withError: false
+    
+spring:
+  cloud:
+    stream: 
+      bindings:
+        output:
+          destination: reactordemo
+          binder: kafka
+        input:
+          consumer:     
+            max-attempts: 3
+            backOffInitialInterval: 1000
+            backOffMaxInterval: 10000
+            backOffMultiplier: 2.0
+          group: reactor.demo
+          destination: reactordemo
+          binder: kafka
+      binders:
+          kafka:
+            type: kafka
+            environment:
+              spring:
+                kafka:                        
+                  brokers: ${KAFKA_HOST:127.0.0.1}
+      kafka:
+        bindings:
+          input:
+            consumer:
+              autoCommitOffset: true
+              enableDlq: true
+              dlqName: error.reactordemo                    
