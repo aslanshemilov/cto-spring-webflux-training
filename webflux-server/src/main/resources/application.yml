@@ -10,7 +10,6 @@ webflux-server:
     url: https://api.github.com
   server:
     url: http://localhost
-    port: 8080
 
 KafkaApplication:
   producer:

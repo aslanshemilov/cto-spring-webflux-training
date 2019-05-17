@@ -92,7 +92,9 @@ public class StreamConsumer implements Notifiable {
 			return Flux.fromIterable(repos)
 					.flatMap(repoName -> {
 						LOGGER.info("	- Repo {} info:", repoName);
-						return webServerClient.getRepoReport(project.getId(), repoName);
+						Mono<RepoReport> report = webServerClient.getRepoReport(project.getId(), repoName)
+								.switchIfEmpty(Mono.just(new RepoReport()));
+						return report;
 					})
 					.flatMap(repo -> {
 						if (repo.getLanguages() == null || repo.getLanguages().isEmpty()) {

@@ -10,7 +10,6 @@ webflux-server:
     url: http://localhost:1082
   server:
     url: http://localhost
-    port: 8080
 
 KafkaApplication:
   producer:
