@@ -1,6 +1,9 @@
 package com.telefonica.training.webflux.server.queue;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +14,7 @@ import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.cloud.stream.messaging.Sink;
 
 import com.telefonica.training.webflux.server.domain.Project;
+import com.telefonica.training.webflux.server.domain.RepoReport;
 import com.telefonica.training.webflux.server.client.WebServerClient;
 
 import reactor.core.publisher.Flux;
@@ -46,7 +50,7 @@ public class StreamConsumer implements Notifiable {
 					} else {
 						updated(notification.getOld(), notification.getCurrent());
 					}
-					return null;
+					return Flux.empty();
 			})
 			.onErrorResume(exc -> {
 					LOGGER.error("Error consuming message: {}", exc.getMessage());
@@ -58,7 +62,7 @@ public class StreamConsumer implements Notifiable {
 	@Override
 	public <T> void inserted(T current) {
 		LOGGER.info("Inserted called");
-		listRepos(current);
+		listRepos(current).subscribe();
 	}
 
 	@Override
@@ -69,30 +73,36 @@ public class StreamConsumer implements Notifiable {
 	@Override
 	public <T> void updated(T old, T current) {
 		LOGGER.info("Updated called");	
-		listRepos(current);
+		listRepos(current).subscribe();
 	}
 	
 	public <T> Mono<Boolean> listRepos(T element) {
 		if (element == null) {
-			LOGGER.error("Null element received");
-			return Mono.just(false);
+			LOGGER.info("Null element received");
+			return Mono.just(true);
 		}
 		if (element instanceof Project) {
 			Project project = (Project) element;
 			LOGGER.info("Project {} repos info:", project.getName());
-			return Flux.fromIterable(project.getRepositories())
+			List<String> repos = project.getRepositories();
+			if (repos == null || repos.isEmpty()) {
+				LOGGER.info("	- No repositories");
+				return Mono.just(true);
+			}
+			return Flux.fromIterable(repos)
 					.flatMap(repoName -> {
-						LOGGER.info("Repo {} info:", repoName);
+						LOGGER.info("	- Repo {} info:", repoName);
 						return webServerClient.getRepoReport(project.getId(), repoName);
 					})
 					.flatMap(repo -> {
 						if (repo.getLanguages() == null || repo.getLanguages().isEmpty()) {
-							return Mono.empty();
+							LOGGER.info("No languages");							
+							return Flux.empty();
 						}
 						return Flux.fromIterable(repo.getLanguages().entrySet())
 								.flatMap(language -> {
-									LOGGER.info("Repo ({}, {}): ", language.getKey(), language.getValue());
-									return Mono.empty();
+									LOGGER.info("		- Repo: ({}, {}) ", language.getKey(), language.getValue());
+									return Flux.empty();
 								});
 					})
 					.then(Mono.just(true));			

@@ -6,6 +6,7 @@ package com.telefonica.training.webflux.server.github;
 
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -21,9 +22,9 @@ public class GithubClient {
 
 	private final WebClient webClient;
 
-	public GithubClient() {
+	public GithubClient(@Value("${webflux-server.github.url}") String url) {
 		webClient = WebClient.builder()
-				.baseUrl("https://api.github.com")
+				.baseUrl(url)
 				.defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
 				.build();
 	}

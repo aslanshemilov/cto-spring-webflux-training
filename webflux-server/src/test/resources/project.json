@@ -1,0 +1,6 @@
+{
+"name": "myProject",
+"organization": "telefonica",
+"githubToken": "asdkakasd",
+"repositories": ["repo1", "repo2", "repo3"]
+}

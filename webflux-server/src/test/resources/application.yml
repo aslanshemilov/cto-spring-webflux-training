@@ -7,7 +7,7 @@ error-controler-advice:
 webflux-server:
   base-path: /api
   github:
-    url: https://api.github.com
+    url: http://localhost:1082
   server:
     url: http://localhost
     port: 8080

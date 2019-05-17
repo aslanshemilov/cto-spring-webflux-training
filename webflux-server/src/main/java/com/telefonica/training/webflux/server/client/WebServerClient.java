@@ -19,7 +19,7 @@ public class WebServerClient {
 
 	private final WebClient webClient;
 
-	public WebServerClient(@Value("${webflux-server.server.url}") String url, @Value("${server.port}") int port) {
+	public WebServerClient(@Value("${webflux-server.server.url}") String url, @Value("${webflux-server.server.port}") int port) {
 		webClient = WebClient.builder()
 				.baseUrl(url + ":" + port)
 				.defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
