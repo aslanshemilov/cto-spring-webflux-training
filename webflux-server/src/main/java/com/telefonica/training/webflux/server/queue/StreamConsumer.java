@@ -1,8 +1,10 @@
 package com.telefonica.training.webflux.server.queue;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 
 import org.slf4j.Logger;
@@ -19,6 +21,8 @@ import com.telefonica.training.webflux.server.client.WebServerClient;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.util.function.Tuple2;
+import reactor.util.function.Tuples;
 
 @ConditionalOnExpression("${KafkaApplication.consumer.enabled}")
 @EnableBinding(Sink.class)
@@ -36,7 +40,7 @@ public class StreamConsumer implements Notifiable {
 		process(input).subscribe();
 	}
 
-	public Mono<Boolean> process(Flux<Notification> input) {
+	private Mono<Boolean> process(Flux<Notification> input) {
 		return input.map(notification -> {
 					LOGGER.info("Processing notification: {}", notification);
 					if (notification.getOld() == null) {
@@ -62,7 +66,7 @@ public class StreamConsumer implements Notifiable {
 	@Override
 	public <T> void inserted(T current) {
 		LOGGER.info("Inserted called");
-		listRepos(current).subscribe();
+		retreiveReport(current).subscribe();
 	}
 
 	@Override
@@ -73,44 +77,56 @@ public class StreamConsumer implements Notifiable {
 	@Override
 	public <T> void updated(T old, T current) {
 		LOGGER.info("Updated called");	
-		listRepos(current).subscribe();
+		retreiveReport(current).subscribe();
 	}
 	
-	public <T> Mono<Boolean> listRepos(T element) {
-		if (element == null) {
-			LOGGER.info("Null element received");
-			return Mono.just(true);
-		}
+	private <T> Mono<Boolean> retreiveReport(T element) {
+		Map<String, List<Tuple2<String, Integer>>> report = new HashMap<>();		
 		if (element instanceof Project) {
 			Project project = (Project) element;
-			LOGGER.info("Project {} repos info:", project.getName());
 			List<String> repos = project.getRepositories();
 			if (repos == null || repos.isEmpty()) {
-				LOGGER.info("	- No repositories");
 				return Mono.just(true);
 			}
 			return Flux.fromIterable(repos)
-					.flatMap(repoName -> {
-						LOGGER.info("	- Repo {} info:", repoName);
-						Mono<RepoReport> report = webServerClient.getRepoReport(project.getId(), repoName)
-								.switchIfEmpty(Mono.just(new RepoReport()));
-						return report;
-					})
-					.flatMap(repo -> {
-						if (repo.getLanguages() == null || repo.getLanguages().isEmpty()) {
-							LOGGER.info("No languages");							
-							return Flux.empty();
-						}
-						return Flux.fromIterable(repo.getLanguages().entrySet())
-								.flatMap(language -> {
-									LOGGER.info("		- Repo: ({}, {}) ", language.getKey(), language.getValue());
-									return Flux.empty();
-								});
-					})
+					.flatMap(repoName -> Mono.just(Tuples.of(repoName,
+													webServerClient.getRepoReport(project.getId(), repoName)
+														.switchIfEmpty(Mono.just(new RepoReport()))
+														.onErrorReturn(new RepoReport()))
+										)
+					)
+					.flatMap(tuple -> tuple.getT2()
+							.flatMapMany(repo -> {
+								if (repo.getLanguages() == null || repo.getLanguages().isEmpty()) {
+									return Mono.empty();
+								}
+								return Flux.fromIterable(repo.getLanguages().entrySet())
+									.flatMap(language -> {
+										List<Tuple2<String, Integer>> list = report.get(tuple.getT1());
+										if (list == null) {
+											list = new ArrayList<>();
+										}
+										list.add(Tuples.of(language.getKey(), language.getValue()));
+										report.put(tuple.getT1(), list);
+										return Flux.just(language);
+									});							
+							})
+					)
+					.doAfterTerminate(() -> listReport(project, report))
 					.then(Mono.just(true));			
 		}
-		LOGGER.error("Not a project object notified: {}", element);		
+		LOGGER.error("Error with notification received: {}", element);		
 		return Mono.just(false);
+	}
+	
+	private void listReport(Project project, Map<String, List<Tuple2<String, Integer>>> report) {
+		LOGGER.info("Project {} repos info:", project.getName());
+		for (Map.Entry<String, List<Tuple2<String, Integer>>> entry : report.entrySet()) {
+			LOGGER.info("	- Repo {} info:", entry.getKey());
+			for (Tuple2<String, Integer> tuple: entry.getValue()) {
+				LOGGER.info("		- Repo: ({}, {}) ", tuple.getT1(), tuple.getT2());
+			}
+		} 		
 	}
 	
 }
