@@ -32,7 +32,7 @@ services:
     hostname: mongodb
     restart: always
     ports:
-      - 27017:27017
+      - "27017:27017"
     volumes:
       - /data/db
       - /data/configdb      
