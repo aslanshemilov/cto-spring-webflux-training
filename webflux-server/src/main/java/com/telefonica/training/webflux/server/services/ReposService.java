@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import com.telefonica.training.webflux.server.domain.RepoReport;
 import com.telefonica.training.webflux.server.exceptions.NotFoundException;
 import com.telefonica.training.webflux.server.github.GithubClient;
+import com.telefonica.training.webflux.server.queue.Notifiable;
+import com.telefonica.training.webflux.server.queue.StreamProducer;
 
 import reactor.core.publisher.Mono;
 
@@ -17,7 +19,7 @@ public class ReposService {
 
 	private final ProjectsService projectsService;
 	private final GithubClient githubClient;
-
+	
 	public ReposService(ProjectsService projectsService, GithubClient githubClient) {
 		this.projectsService = projectsService;
 		this.githubClient = githubClient;
