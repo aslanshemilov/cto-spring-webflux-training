@@ -51,9 +51,8 @@ public class GithubClient {
 	private static ExchangeFilterFunction addCorrelatorHeader() {
 		return ExchangeFilterFunction.ofRequestProcessor(request ->
 			Mono.subscriberContext()
-					.map(ctxt -> ctxt.get(RequestContext.class))
-					.map(RequestContext::getCorrelator)
-					.map(corr -> ClientRequest.from(request).header(CustomHeaders.CORRELATOR, corr).build())
+					.map(ctxt -> ctxt.getOrDefault(RequestContext.class, new RequestContext()))
+					.map(requestContext -> ClientRequest.from(request).header(CustomHeaders.CORRELATOR, requestContext.getCorrelator()).build())
 		);
 	}
 
