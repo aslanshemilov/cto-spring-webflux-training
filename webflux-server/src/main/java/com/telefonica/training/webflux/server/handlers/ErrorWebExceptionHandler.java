@@ -25,8 +25,10 @@ import com.telefonica.training.webflux.server.domain.ServerError;
 import com.telefonica.training.webflux.server.exceptions.ResponseException;
 import com.telefonica.training.webflux.server.exceptions.ServerException;
 
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
+@Slf4j
 @Component
 @Order(-2)
 public class ErrorWebExceptionHandler extends AbstractErrorWebExceptionHandler {
@@ -66,6 +68,7 @@ public class ErrorWebExceptionHandler extends AbstractErrorWebExceptionHandler {
 			ResponseStatusException responseStatusException = (ResponseStatusException)t;
 			return new ResponseException(responseStatusException.getStatus());
 		}
+		log.error("Unhandled exception {}: {}", t.getClass().getName(), t.getMessage());
 		return new ServerException(t);
 	}
 

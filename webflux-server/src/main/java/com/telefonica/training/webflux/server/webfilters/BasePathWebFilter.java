@@ -14,7 +14,7 @@ import org.springframework.web.server.WebFilterChain;
 
 import reactor.core.publisher.Mono;
 
-@Order(2)
+@Order(3)
 @Component
 public class BasePathWebFilter implements WebFilter {
 

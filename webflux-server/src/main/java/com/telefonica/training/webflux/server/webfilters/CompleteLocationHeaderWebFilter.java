@@ -19,7 +19,7 @@ import reactor.core.publisher.Mono;
 /**
  * WebFilter to compose the Location header composing the URI with the request URI and the location header (relative URI).
  */
-@Order(3)
+@Order(4)
 @Component
 public class CompleteLocationHeaderWebFilter implements WebFilter {
 

@@ -1,5 +1,13 @@
+spring:
+  application:
+    name: webflux-server
+
 server:
   port: 8080
+
+logging:
+  level:
+    root: INFO
 
 error-controler-advice:
   enabled: false

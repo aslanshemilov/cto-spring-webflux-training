@@ -17,6 +17,7 @@ import com.telefonica.training.webflux.server.domain.RequestContext;
 import com.telefonica.training.webflux.server.headers.CustomHeaders;
 
 import reactor.core.publisher.Mono;
+import reactor.util.context.Context;
 
 @Order(1)
 @Component
@@ -27,21 +28,24 @@ public class CorrelatorWebFilter implements WebFilter {
 		ServerHttpRequest request = exchange.getRequest();
 		RequestContext requestContext = buildRequestContext(request);
 		return chain.filter(exchange)
-				.subscriberContext(ctxt -> ctxt.put(RequestContext.class, requestContext));
+				.subscriberContext(Context.of(RequestContext.class, requestContext));
 	}
 
 	protected RequestContext buildRequestContext(ServerHttpRequest request) {
-		String correlator = getCorrelator(request);
+		String transactionId = getTransactionId();
+		String correlator = getCorrelator(request, transactionId);
 		return new RequestContext()
-				.setCorrelator(correlator);
+				.setCorrelator(correlator)
+				.setTransactionId(transactionId);
 	}
 
-	protected String getCorrelator(ServerHttpRequest request) {
+	protected String getTransactionId() {
+		return UUID.randomUUID().toString();
+	}
+
+	protected String getCorrelator(ServerHttpRequest request, String defaultCorrelator) {
 		String correlator = request.getHeaders().getFirst(CustomHeaders.CORRELATOR);
-		if (correlator == null) {
-			correlator = UUID.randomUUID().toString();
-		}
-		return correlator;
+		return (correlator == null) ? defaultCorrelator : correlator;
 	}
 
 }
