@@ -1,6 +1,6 @@
 {
 "name": "myProject",
-"organization": "telefonica",
-"githubToken": "asdkakasd",
+"organization": "myOrganization",
+"githubToken": "adfasdfasdf",
 "repositories": ["repo1", "repo2", "repo3"]
 }

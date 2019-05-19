@@ -11,6 +11,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.codec.ServerCodecConfigurer;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.support.WebExchangeBindException;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.RequestPredicates;
 import org.springframework.web.reactive.function.server.RouterFunction;
@@ -24,8 +25,10 @@ import com.telefonica.training.webflux.server.domain.ServerError;
 import com.telefonica.training.webflux.server.exceptions.ResponseException;
 import com.telefonica.training.webflux.server.exceptions.ServerException;
 
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
+@Slf4j
 @Component
 @Order(-2)
 public class ErrorWebExceptionHandler extends AbstractErrorWebExceptionHandler {
@@ -57,10 +60,15 @@ public class ErrorWebExceptionHandler extends AbstractErrorWebExceptionHandler {
 		if (t instanceof ResponseException) {
 			return (ResponseException) t;
 		}
+		if (t instanceof WebExchangeBindException) {
+			WebExchangeBindException e = (WebExchangeBindException) t;
+			return new ResponseException(e.getStatus(), "invalid_request", e.getFieldError().getDefaultMessage());
+		}
 		if (t instanceof ResponseStatusException) {
 			ResponseStatusException responseStatusException = (ResponseStatusException)t;
 			return new ResponseException(responseStatusException.getStatus());
 		}
+		log.error("Unhandled exception {}: {}", t.getClass().getName(), t.getMessage());
 		return new ServerException(t);
 	}
 

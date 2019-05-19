@@ -6,14 +6,19 @@ package com.telefonica.training.webflux.server.github;
 
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.ClientRequest;
+import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import com.telefonica.training.webflux.server.configuration.Config;
 import com.telefonica.training.webflux.server.domain.Project;
 import com.telefonica.training.webflux.server.domain.RepoReport;
+import com.telefonica.training.webflux.server.domain.RequestContext;
+import com.telefonica.training.webflux.server.headers.CustomHeaders;
 
 import reactor.core.publisher.Mono;
 
@@ -22,10 +27,11 @@ public class GithubClient {
 
 	private final WebClient webClient;
 
-	public GithubClient(@Value("${webflux-server.github.url}") String url) {
+	public GithubClient(Config config) {
 		webClient = WebClient.builder()
-				.baseUrl(url)
+				.baseUrl(config.getGithub().getUrl())
 				.defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+				.filter(addCorrelatorHeader())
 				.build();
 	}
 
@@ -38,8 +44,16 @@ public class GithubClient {
 				}
 			})
 			.retrieve()
-			.bodyToMono(Map.class)
+			.bodyToMono(new ParameterizedTypeReference<Map<String, Integer>> (){})
 			.map(languages -> new RepoReport().setLanguages(languages));
+	}
+
+	private static ExchangeFilterFunction addCorrelatorHeader() {
+		return ExchangeFilterFunction.ofRequestProcessor(request ->
+			Mono.subscriberContext()
+					.map(ctxt -> ctxt.getOrDefault(RequestContext.class, new RequestContext()))
+					.map(requestContext -> ClientRequest.from(request).header(CustomHeaders.CORRELATOR, requestContext.getCorrelator()).build())
+		);
 	}
 
 }

@@ -1,23 +1,6 @@
-server:
-  port: 8080
-
-error-controler-advice:
-  enabled: false
-
-webflux-server:
-  base-path: /api
-  github:
-    url: https://api.github.com
-  server:
-    url: http://localhost
-
-KafkaApplication:
-  producer:
-    enabled: true
-  consumer:
-    enabled: true
-    
 spring:
+  application:
+    name: webflux-server
   cloud:
     stream: 
       bindings:
@@ -38,6 +21,28 @@ spring:
             type: kafka
             environment:
               spring:
-                kafka:                        
+                kafka:
                   brokers: ${KAFKA_HOST:127.0.0.1}
 
+server:
+  port: 8080
+
+logging:
+  level:
+    root: INFO
+
+error-controler-advice:
+  enabled: false
+
+webflux-server:
+  base-path: /api
+  github:
+    url: https://api.github.com
+  server:
+    url: http://localhost
+
+KafkaApplication:
+  producer:
+    enabled: true
+  consumer:
+    enabled: true

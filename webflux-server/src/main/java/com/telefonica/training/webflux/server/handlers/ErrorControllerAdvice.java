@@ -14,7 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.telefonica.training.webflux.server.domain.ServerError;
 import com.telefonica.training.webflux.server.exceptions.NotFoundException;
 
-@ConditionalOnProperty(value = "errorControlerAdvice.enabled")
+@ConditionalOnProperty(value = "error-controler-advice.enabled")
 @ControllerAdvice
 public class ErrorControllerAdvice {
 

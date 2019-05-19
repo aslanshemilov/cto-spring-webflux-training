@@ -132,9 +132,9 @@ public class StreamConsumer implements Notifiable {
 	private void listReport(Project project, Map<String, List<Tuple2<String, Integer>>> report) {
 		LOGGER.info("Project {} repos info:", project.getName());
 		for (Map.Entry<String, List<Tuple2<String, Integer>>> entry : report.entrySet()) {
-			LOGGER.info("	- Repo {} info:", entry.getKey());
+			LOGGER.info("    - Repo {} info:", entry.getKey());
 			for (Tuple2<String, Integer> tuple: entry.getValue()) {
-				LOGGER.info("		- Repo: ({}, {}) ", tuple.getT1(), tuple.getT2());
+				LOGGER.info("        - Repo: ({}, {}) ", tuple.getT1(), tuple.getT2());
 			}
 		} 		
 	}
