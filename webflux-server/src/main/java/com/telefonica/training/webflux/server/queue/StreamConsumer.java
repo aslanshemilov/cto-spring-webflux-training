@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Random;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +38,10 @@ public class StreamConsumer implements Notifiable {
 		process(input).subscribe();
 	}
 
+	/**
+	 * Whenever a Flux of Notification is received it is processed to distinguish among an insert, delete or update
+	 * and call to the appropiated functions. 
+	 */
 	private Mono<Boolean> process(Flux<Notification> input) {
 		return input.map(notification -> {
 					LOGGER.info("Processing notification: {}", notification);
@@ -80,6 +82,11 @@ public class StreamConsumer implements Notifiable {
 		retreiveReport(current).subscribe();
 	}
 	
+	/*
+	 * Go through the project repos and for each of them within a flux streaming recover its technology information from github.
+	 * All the information recovered is stored in a map for a later printing.
+	 * 
+	 */
 	private <T> Mono<Boolean> retreiveReport(T element) {
 		Map<String, List<Tuple2<String, Integer>>> report = new HashMap<>();		
 		if (element instanceof Project) {
@@ -119,6 +126,9 @@ public class StreamConsumer implements Notifiable {
 		return Mono.just(false);
 	}
 	
+	/**
+	 * Traversal the map printing the report information.
+	 */
 	private void listReport(Project project, Map<String, List<Tuple2<String, Integer>>> report) {
 		LOGGER.info("Project {} repos info:", project.getName());
 		for (Map.Entry<String, List<Tuple2<String, Integer>>> entry : report.entrySet()) {

@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import com.telefonica.training.webflux.server.domain.Project;
 import com.telefonica.training.webflux.server.exceptions.NotFoundException;
-import com.telefonica.training.webflux.server.queue.Notifiable;
 import com.telefonica.training.webflux.server.queue.StreamProducer;
 import com.telefonica.training.webflux.server.repositories.ProjectsRepository;
 

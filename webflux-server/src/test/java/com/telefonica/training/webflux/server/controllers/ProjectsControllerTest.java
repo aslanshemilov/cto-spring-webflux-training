@@ -65,7 +65,7 @@ public class ProjectsControllerTest {
 	}
 
 	@Test
-	public void validE2ETest() {
+	public void validReportListingTest() {
 		class TestCase {
 			String testFile;
 			public TestCase(String testFile) {
