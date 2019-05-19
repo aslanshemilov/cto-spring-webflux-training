@@ -1,0 +1,9 @@
+server:
+  port: 8080
+
+error-controler-advice:
+  enabled: false
+
+webflux-server:
+  github:
+    url: https://api.github.com

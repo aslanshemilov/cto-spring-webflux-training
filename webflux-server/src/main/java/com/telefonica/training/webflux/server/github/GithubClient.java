@@ -12,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import com.telefonica.training.webflux.server.configuration.Config;
 import com.telefonica.training.webflux.server.domain.Project;
 import com.telefonica.training.webflux.server.domain.RepoReport;
 
@@ -22,9 +23,9 @@ public class GithubClient {
 
 	private final WebClient webClient;
 
-	public GithubClient() {
+	public GithubClient(Config config) {
 		webClient = WebClient.builder()
-				.baseUrl("https://api.github.com")
+				.baseUrl(config.getGithub().getUrl())
 				.defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
 				.build();
 	}
