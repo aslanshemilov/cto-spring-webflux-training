@@ -21,15 +21,11 @@ spring:
             type: kafka
             environment:
               spring:
-                kafka:
+                kafka:                        
                   brokers: ${KAFKA_HOST:127.0.0.1}
-
+                  
 server:
   port: 8080
-
-logging:
-  level:
-    root: INFO
 
 error-controler-advice:
   enabled: false
@@ -37,7 +33,7 @@ error-controler-advice:
 webflux-server:
   base-path: /api
   github:
-    url: https://api.github.com
+    url: http://localhost:1082
   server:
     url: http://localhost
 
