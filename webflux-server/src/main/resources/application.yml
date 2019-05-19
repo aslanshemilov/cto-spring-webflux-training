@@ -5,5 +5,6 @@ error-controler-advice:
   enabled: false
 
 webflux-server:
+  base-path: /api
   github:
     url: https://api.github.com

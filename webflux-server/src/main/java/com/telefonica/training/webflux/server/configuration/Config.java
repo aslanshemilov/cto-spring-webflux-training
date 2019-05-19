@@ -13,6 +13,7 @@ import lombok.Data;
 @ConfigurationProperties(prefix = "webflux-server")
 @Data
 public class Config {
+	private String basePath;
 	private Github github;
 
 	@Data

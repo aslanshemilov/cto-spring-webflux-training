@@ -16,7 +16,7 @@ import com.telefonica.training.webflux.server.services.ReposService;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/api/projects/{projectId}/repos")
+@RequestMapping("/projects/{projectId}/repos")
 @CrossOrigin
 public class ReposController {
 
