@@ -15,6 +15,10 @@ import com.telefonica.webflux.springcloudstream.kafka.uppercasetransformer.model
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+/**
+ *  CONSUMER: It receives a Flux of SecretMessage and converts each message to uppercase.
+ *  
+ */
 @ConditionalOnExpression("${KafkaApplication.consumer.enabled}")
 @EnableBinding(Sink.class)
 public class KafkaConsumer {
@@ -54,7 +58,6 @@ public class KafkaConsumer {
 	 * SETTER & GETTER
 	 *
 	 */
-
 	public boolean isWithError() {
 		return withError;
 	}

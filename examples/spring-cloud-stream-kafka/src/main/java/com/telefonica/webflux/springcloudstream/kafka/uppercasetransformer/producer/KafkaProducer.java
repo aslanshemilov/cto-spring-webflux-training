@@ -18,6 +18,11 @@ import com.telefonica.webflux.springcloudstream.kafka.uppercasetransformer.model
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+/**
+ *  PRODUCER: It generates a flux emiting events every 1 second.
+ *  Each event  contains a SecretMessage instance with a random fixed length message in lowercase.
+ *  
+ */
 @ConditionalOnExpression("${KafkaApplication.producer.enabled}")
 @EnableBinding(Source.class)
 public class KafkaProducer {
@@ -42,7 +47,6 @@ public class KafkaProducer {
 	/**
 	 * Producing an event (SecretMessage) each second.
 	 *
-	 * @param output
 	 */
 	@StreamEmitter
 	public void emit(@Output(Source.OUTPUT) FluxSender output) {
@@ -73,7 +77,6 @@ public class KafkaProducer {
 	 * SETTERS & GETTERS
 	 *
 	 */
-
 	public boolean isConsumerEnabled() {
 		return consumerEnabled;
 	}
