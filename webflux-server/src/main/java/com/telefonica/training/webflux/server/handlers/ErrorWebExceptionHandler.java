@@ -11,6 +11,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.codec.ServerCodecConfigurer;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.support.WebExchangeBindException;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.RequestPredicates;
 import org.springframework.web.reactive.function.server.RouterFunction;
@@ -56,6 +57,10 @@ public class ErrorWebExceptionHandler extends AbstractErrorWebExceptionHandler {
 		Throwable t = getError(request);
 		if (t instanceof ResponseException) {
 			return (ResponseException) t;
+		}
+		if (t instanceof WebExchangeBindException) {
+			WebExchangeBindException e = (WebExchangeBindException) t;
+			return new ResponseException(e.getStatus(), "invalid_request", e.getFieldError().getDefaultMessage());
 		}
 		if (t instanceof ResponseStatusException) {
 			ResponseStatusException responseStatusException = (ResponseStatusException)t;

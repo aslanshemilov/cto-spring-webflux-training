@@ -6,6 +6,8 @@ package com.telefonica.training.webflux.server.controllers;
 
 import java.net.URI;
 
+import javax.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +39,7 @@ public class ProjectsController {
 	}
 
 	@PostMapping(value = "", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public Mono<ResponseEntity<Project>> createProject(@RequestBody Project project) {
+	public Mono<ResponseEntity<Project>> createProject(@Valid @RequestBody Project project) {
 		return projectsService.createProject(project)
 				.map(p -> {
 					URI locationUri = URI.create(p.getId().toString());
@@ -56,7 +58,7 @@ public class ProjectsController {
 	}
 
 	@PutMapping("/{projectId}")
-	public Mono<Project> updateProject(@PathVariable long projectId, @RequestBody Project project) {
+	public Mono<Project> updateProject(@PathVariable long projectId, @Valid @RequestBody Project project) {
 		project.setId(projectId);
 		return projectsService.updateProject(project);
 	}
