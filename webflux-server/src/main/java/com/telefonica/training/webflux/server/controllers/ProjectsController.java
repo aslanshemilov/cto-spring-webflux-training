@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.util.UriTemplate;
 
 import com.telefonica.training.webflux.server.domain.Project;
 import com.telefonica.training.webflux.server.services.ProjectsService;
@@ -41,7 +40,7 @@ public class ProjectsController {
 	public Mono<ResponseEntity<Project>> createProject(@RequestBody Project project) {
 		return projectsService.createProject(project)
 				.map(p -> {
-					URI locationUri = new UriTemplate("/api/projects/{projectId}").expand(p.getId());
+					URI locationUri = URI.create(p.getId().toString());
 					return ResponseEntity.created(locationUri).body(p);
 				});
 	}
