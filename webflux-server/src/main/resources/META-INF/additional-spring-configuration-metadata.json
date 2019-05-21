@@ -1,0 +1,20 @@
+{
+	"properties": [
+		{
+			"name": "error-controler-advice.enabled",
+			"type": "java.lang.Boolean",
+			"description": "Enable handling errors at controller level"
+		},
+		{
+			"name": "webflux-server.base-path",
+			"type": "java.lang.String",
+			"description": "Github API URL"
+		},
+		{
+			"name": "webflux-server.github.url",
+			"type": "java.lang.String",
+			"description": "Github API URL"
+		}
+	]
+}
+	
