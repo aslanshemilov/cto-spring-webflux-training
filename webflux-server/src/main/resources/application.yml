@@ -1,6 +1,28 @@
 spring:
   application:
     name: webflux-server
+  cloud:
+    stream: 
+      bindings:
+        output:
+          destination: webfluxTopic
+          binder: kafka
+        input:
+          consumer:     
+            max-attempts: 3
+            backOffInitialInterval: 1000
+            backOffMaxInterval: 10000
+            backOffMultiplier: 2.0
+          group: webFlux.demo
+          destination: webfluxTopic
+          binder: kafka
+      binders:
+          kafka:
+            type: kafka
+            environment:
+              spring:
+                kafka:
+                  brokers: ${KAFKA_HOST:127.0.0.1}
   data:
     mongodb:
       uri: ${MONGO_URI:mongodb://127.0.0.1/webflux}
@@ -19,3 +41,11 @@ webflux-server:
   base-path: /api
   github:
     url: https://api.github.com
+  server:
+    url: http://localhost
+
+KafkaApplication:
+  producer:
+    enabled: true
+  consumer:
+    enabled: true

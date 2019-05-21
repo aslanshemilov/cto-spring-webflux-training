@@ -17,7 +17,6 @@ public class ReposService {
 
 	private final ProjectsService projectsService;
 	private final GithubClient githubClient;
-
 	public ReposService(ProjectsService projectsService, GithubClient githubClient) {
 		this.projectsService = projectsService;
 		this.githubClient = githubClient;
