@@ -1,6 +1,9 @@
 spring:
   application:
     name: webflux-server
+  data:
+    mongodb:
+      uri: ${MONGO_URI:mongodb://127.0.0.1/webflux}
 
 server:
   port: 8080

@@ -10,15 +10,21 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+@Document("projects")
 @Data
 @Accessors(chain=true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Project {
+	
+	@Id
 	private Long id;
 
 	@NotEmpty(message = "name is mandatory")

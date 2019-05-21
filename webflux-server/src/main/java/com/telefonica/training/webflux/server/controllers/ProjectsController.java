@@ -19,8 +19,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.telefonica.training.webflux.server.domain.PageView;
 import com.telefonica.training.webflux.server.domain.Project;
 import com.telefonica.training.webflux.server.services.ProjectsService;
 
@@ -51,6 +53,14 @@ public class ProjectsController {
 	public Flux<Project> findProjects() {
 		return projectsService.findProjects();
 	}
+	
+	@GetMapping(params= {"page"})
+	public Mono<PageView> findProjects2( @RequestParam int page, @RequestParam(defaultValue="3") int size){
+		if(page == 0) {
+			return Mono.error(new Throwable("Page cannot be 0"));
+		}
+		return projectsService.findProjectsPaginated(page - 1, size);
+	} 
 
 	@GetMapping("/{projectId}")
 	public Mono<Project> getProject(@PathVariable long projectId) {
