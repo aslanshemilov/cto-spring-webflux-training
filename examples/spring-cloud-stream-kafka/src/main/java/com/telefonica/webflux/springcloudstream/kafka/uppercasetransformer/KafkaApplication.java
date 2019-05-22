@@ -1,4 +1,4 @@
-package com.telefonica.webflux.springcloudstream.kafka.uppercasetransformer.app;
+package com.telefonica.webflux.springcloudstream.kafka.uppercasetransformer;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

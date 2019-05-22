@@ -13,7 +13,7 @@ import org.springframework.cloud.stream.messaging.Source;
 import org.springframework.cloud.stream.reactive.FluxSender;
 import org.springframework.cloud.stream.reactive.StreamEmitter;
 
-import com.telefonica.webflux.springcloudstream.kafka.uppercasetransformer.model.SecretMessage;
+import com.telefonica.webflux.springcloudstream.kafka.uppercasetransformer.domain.SecretMessage;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -23,16 +23,16 @@ import reactor.core.publisher.Mono;
  *  Each event  contains a SecretMessage instance with a random fixed length message in lowercase.
  *  
  */
-@ConditionalOnExpression("${KafkaApplication.producer.enabled}")
+@ConditionalOnExpression("${kafka-application.producer.enabled}")
 @EnableBinding(Source.class)
 public class KafkaProducer {
 
 	protected static final Logger LOGGER = LoggerFactory.getLogger(KafkaProducer.class);
 
-	@Value("${KafkaApplication.consumer.enabled:true}")
+	@Value("${kafka-application.consumer.enabled:true}")
 	private boolean consumerEnabled;
 
-	@Value("${KafkaApplication.message.length:10}")
+	@Value("${kafka-application.message.length:10}")
 	private int messageLength;
 
 	/**
@@ -41,7 +41,7 @@ public class KafkaProducer {
 	 * If we're also consuming we can not block due to interaction with consumer.
 	 *
 	 */
-	@Value("${KafkaApplication.producer.blockingTime:10}")
+	@Value("${kafka-application.producer.blocking-time:10}")
 	private int blockingTime;
 
 	/**
