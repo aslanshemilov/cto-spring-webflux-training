@@ -1,12 +1,12 @@
-KafkaApplication:
+kafka-application:
   message:
-    length: 10
+    length: 20
   producer:
     enabled: true
-    blockingTime: 10    
+    blocking-time: 10    
   consumer:
     enabled: true
-    withError: false
+    with-error: false
     
 spring:
   cloud:

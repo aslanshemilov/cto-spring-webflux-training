@@ -1,4 +1,4 @@
-package com.telefonica.webflux.springcloudstream.kafka.uppercasetransformer.model;
+package com.telefonica.webflux.springcloudstream.kafka.uppercasetransformer.domain;
 
 
 import lombok.AllArgsConstructor;

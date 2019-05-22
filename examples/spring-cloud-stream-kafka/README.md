@@ -10,17 +10,19 @@ The SecretMessage holds a lowercase random string that it's injected in the apac
 The application manages different configuration posibilities through the application.yml file:
 
 ```yaml
-KafkaApplication:
+kafka-application:
   message:
     length: 10
   producer:
     enabled: false
-    blockingTime: 10
+    blocking-time: 10
   consumer:
     enabled: true
+    with-error: true
 ```
 
 - message.length: it controls the size of the random lowercase string within SecretMessages objects.
-- producer.enabled: it controls wether the producer it's or not created.
-- producer.blockingTime: if producer is enabled but consumer not, it has to block the flux emitted, and the property controls in seconds this time.
-- producer.consumer: it controls wether the consumer it's or not created.
+- producer.enabled: it controls wether the producer is or not created.
+- producer.blocking-time: if producer is enabled but consumer not, it has to block the flux emitted, and the property controls in seconds this time.
+- consumer.enabled: it controls wether the consumer is or not created.
+- consumer.with-error: if enable consumer throws an exception when the message contains an "a". To test retry strategy.

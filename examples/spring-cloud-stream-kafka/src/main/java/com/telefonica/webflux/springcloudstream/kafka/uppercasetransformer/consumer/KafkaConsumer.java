@@ -9,8 +9,8 @@ import org.springframework.cloud.stream.annotation.Input;
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.cloud.stream.messaging.Sink;
 
-import com.telefonica.webflux.springcloudstream.kafka.uppercasetransformer.model.KafkaApplicationException;
-import com.telefonica.webflux.springcloudstream.kafka.uppercasetransformer.model.SecretMessage;
+import com.telefonica.webflux.springcloudstream.kafka.uppercasetransformer.domain.SecretMessage;
+import com.telefonica.webflux.springcloudstream.kafka.uppercasetransformer.exceptions.KafkaApplicationException;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -19,7 +19,7 @@ import reactor.core.publisher.Mono;
  *  CONSUMER: It receives a Flux of SecretMessage and converts each message to uppercase.
  *  
  */
-@ConditionalOnExpression("${KafkaApplication.consumer.enabled}")
+@ConditionalOnExpression("${kafka-application.consumer.enabled}")
 @EnableBinding(Sink.class)
 public class KafkaConsumer {
 
@@ -27,17 +27,21 @@ public class KafkaConsumer {
 
 	private boolean withError = false;
 
-	public KafkaConsumer(@Value("${KafkaApplication.consumer.withError}") boolean withError) {
+	public KafkaConsumer(@Value("${kafka-application.consumer.with-error}") boolean withError) {
 		this.withError = withError;
 	}
 
 	@StreamListener
-	public void receive(@Input(Sink.INPUT) Flux<SecretMessage> input) {
+	public void receive(@Input(Sink.INPUT) Flux<SecretMessage> input) {	
+//	@StreamListener(Sink.INPUT)
+//	public void receive(SecretMessage input) {
 		process(input).subscribe();
 	}
 
 	public Mono<Boolean> process(Flux<SecretMessage> input) {
+//	public Mono<Boolean> process(SecretMessage input) {		
 		return input.map(message -> {
+//		return Flux.just(input).map(message -> {			
 					final String myMessage = message.getSecretMessage();
 
 					if (isWithError() && myMessage.contains("a")) {
@@ -45,11 +49,8 @@ public class KafkaConsumer {
 					}
 					LOGGER.info("Transformed string: {}", myMessage.toUpperCase());
 					return myMessage.toUpperCase();
-			})
-			.onErrorResume(exc -> {
-					LOGGER.error("Error consuming message: {}", exc.getMessage());
-					return Mono.error(exc);
-			})
+			})	
+			.onErrorContinue((exc, element) -> LOGGER.error("Error consuming message: {}", exc.getMessage()))
 			.then(Mono.just(true));
 	}
 
