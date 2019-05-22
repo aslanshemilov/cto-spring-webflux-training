@@ -23,6 +23,9 @@ spring:
               spring:
                 kafka:
                   brokers: ${KAFKA_HOST:127.0.0.1}
+  data:
+    mongodb:
+      uri: ${MONGO_URI:mongodb://127.0.0.1/webflux}
 
 server:
   port: 8080
