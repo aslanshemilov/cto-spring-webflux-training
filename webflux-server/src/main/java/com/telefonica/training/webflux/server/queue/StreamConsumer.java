@@ -14,6 +14,7 @@ import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.cloud.stream.messaging.Sink;
 
 import com.telefonica.training.webflux.server.domain.Project;
+import com.telefonica.training.webflux.server.domain.ProjectReport;
 import com.telefonica.training.webflux.server.domain.RepoReport;
 import com.telefonica.training.webflux.server.client.WebServerClient;
 
@@ -21,15 +22,18 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
+import com.telefonica.training.webflux.server.repositories.ProjectReportRepository;
 
-@ConditionalOnExpression("${KafkaApplication.consumer.enabled}")
+@ConditionalOnExpression("${kafka-application.consumer.enabled}")
 @EnableBinding(Sink.class)
 public class StreamConsumer implements Notifiable {
 
 	protected static final Logger LOGGER = LoggerFactory.getLogger(StreamConsumer.class);
 	private final WebServerClient webServerClient;
+	private final ProjectReportRepository projectReportRepository;
 	
-	public StreamConsumer(WebServerClient webServerClient) {
+	public StreamConsumer(WebServerClient webServerClient, ProjectReportRepository projectReportRepository) {
+		this.projectReportRepository = projectReportRepository;
 		this.webServerClient = webServerClient;
 	}
 	
@@ -119,7 +123,7 @@ public class StreamConsumer implements Notifiable {
 									});							
 							})
 					)
-					.doAfterTerminate(() -> listReport(project, report))
+					.doAfterTerminate(() -> listAndSaveReport(project, report))
 					.then(Mono.just(true));			
 		}
 		LOGGER.error("Error with notification received: {}", element);		
@@ -129,14 +133,16 @@ public class StreamConsumer implements Notifiable {
 	/**
 	 * Traversal the map printing the report information.
 	 */
-	private void listReport(Project project, Map<String, List<Tuple2<String, Integer>>> report) {
+	private void listAndSaveReport(Project project, Map<String, List<Tuple2<String, Integer>>> report) {
 		LOGGER.info("Project {} repos info:", project.getName());
 		for (Map.Entry<String, List<Tuple2<String, Integer>>> entry : report.entrySet()) {
 			LOGGER.info("    - Repo {} info:", entry.getKey());
 			for (Tuple2<String, Integer> tuple: entry.getValue()) {
 				LOGGER.info("        - Repo: ({}, {}) ", tuple.getT1(), tuple.getT2());
 			}
-		} 		
+		}
+		ProjectReport projectReport = new ProjectReport(project.getName(), report);	
+		projectReportRepository.save(projectReport).subscribe();
 	}
 	
 }

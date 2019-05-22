@@ -20,7 +20,7 @@ import reactor.core.publisher.FluxSink;
  * Publishes all the notifications passed with {@link Notifiable#produce(Object, Object)} in the queue.
  *
  */
-@ConditionalOnExpression("${KafkaApplication.producer.enabled}")
+@ConditionalOnExpression("${kafka-application.producer.enabled}")
 @EnableBinding(Source.class)
 public class StreamProducer implements Notifiable {
 

@@ -1,6 +1,0 @@
-{
-"name": "myProject",
-"organization": "myOrganization",
-"githubToken": "adfasdfasdf",
-"repositories": ["repo1", "repo2", "repo3"]
-}

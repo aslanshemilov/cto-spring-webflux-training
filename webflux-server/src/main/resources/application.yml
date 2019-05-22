@@ -44,7 +44,7 @@ webflux-server:
   server:
     url: http://localhost
 
-KafkaApplication:
+kafka-application:
   producer:
     enabled: true
   consumer:
