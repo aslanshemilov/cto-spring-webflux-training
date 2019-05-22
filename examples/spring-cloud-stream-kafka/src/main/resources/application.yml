@@ -1,6 +1,6 @@
 kafka-application:
   message:
-    length: 10
+    length: 20
   producer:
     enabled: true
     blocking-time: 10    
